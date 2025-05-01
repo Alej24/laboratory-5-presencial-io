@@ -127,6 +127,7 @@ int main()
       rand_num = rand() % 4;
     } else if (timer_val > 0 && last_click != -1) {
       mvprintw((row / 2) - 1, (col / 2) - 5, "You Win!");
+      timer_val = 3;
       rand_num = rand() % 4;
     }
 
