@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/lab5io.dir/src/lab5io.c.o CMakeFiles/lab5io.dir/src/main.c.o -o lab5io  -lncurses 

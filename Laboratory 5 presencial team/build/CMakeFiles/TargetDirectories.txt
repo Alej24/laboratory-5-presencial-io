@@ -1,0 +1,3 @@
+/home/ale159/Laboratory 5 presencial team/build/CMakeFiles/lab5io.dir
+/home/ale159/Laboratory 5 presencial team/build/CMakeFiles/edit_cache.dir
+/home/ale159/Laboratory 5 presencial team/build/CMakeFiles/rebuild_cache.dir
