@@ -121,15 +121,18 @@ int main()
 
     timer_val--;
 
-    if (timer_val < 0) {
+    if (timer_val < 0 && last_click == -1) {
       mvprintw((row / 2) - 1, (col / 2) - 5, "You Lose!");
       timer_val = 3;
+      rand_num = rand() % 4;
+    } else if (timer_val > 0 && last_click != -1) {
+      mvprintw((row / 2) - 1, (col / 2) - 5, "You Win!");
       rand_num = rand() % 4;
     }
 
     current_target = rand_num;
-    last_click = -1;
-    timer_expired = 0;
+    // last_click = -1;
+    // timer_expired = 0;
 
     pthread_create(&thread_io, &attr, ioDevices, (void *)&rand_num);
 
