@@ -18,25 +18,23 @@
 #include <linux/input.h>
 
 #define ENTER_NCURSES 10
-#define WIDTH 80
-#define HEIGHT 24
 
 int stop_timer = 0;
 int current_target = -1;
 int last_click = -1;
-int timer_expired = -1;
 int win = 0;
 int timer_val = 3;
+int row, col;
 
 pthread_mutex_t lock;
 
 int get_quadrant(int x, int y)
 {
-  if (x < WIDTH / 2 && y < HEIGHT / 2)
+  if (x < col / 2 && y < row / 2)
     return 0;
-  if (x >= WIDTH / 2 && y < HEIGHT / 2)
+  if (x >= (col / 2) && y < row / 2)
     return 1;
-  if (x < WIDTH / 2 && y >= HEIGHT / 2)
+  if (x < col / 2 && y >= (row / 2))
     return 2;
   return 3;
 }
@@ -67,12 +65,19 @@ void *mouse_listener(void *arg)
       }
       if (ev.type == EV_KEY && ev.code == BTN_LEFT && ev.value == 1)
       {
-        int q = get_quadrant(mx / 10, my / 10);
+        int q = get_quadrant(mx * col / 65536, my * row / 65536);
         pthread_mutex_lock(&lock);
         last_click = q;
         pthread_mutex_unlock(&lock);
       }
     }
+    // int x_pos = mx * col / 65536;
+    // int y_pos = my * row / 65536;
+
+    // clear();
+    // mvprintw(3, 0, "%d, %d", x_pos, y_pos);
+    // mvprintw(4, 0, "%d", get_quadrant(x_pos, y_pos));
+    // refresh();
   }
 
   close(fd);
@@ -111,8 +116,6 @@ int main()
   {
     clear();
 
-    int row, col;
-
     getmaxyx(stdscr, row, col);
 
     srand(time(NULL));
@@ -121,11 +124,11 @@ int main()
 
     timer_val--;
 
-    if (timer_val < 0 && last_click == -1) {
+    if (timer_val < 0 && last_click != current_target) {
       mvprintw((row / 2) - 1, (col / 2) - 5, "You Lose!");
       timer_val = 3;
       rand_num = rand() % 4;
-    } else if (timer_val > 0 && last_click == current_target) {
+    } else if (timer_val >= 0 && last_click == current_target) {
       mvprintw((row / 2) - 1, (col / 2) - 5, "You Win!");
       timer_val = 3;
       rand_num = rand() % 4;
@@ -133,7 +136,6 @@ int main()
 
     current_target = rand_num;
     last_click = -1;
-    // timer_expired = 0;
 
     pthread_create(&thread_io, &attr, ioDevices, (void *)&rand_num);
 
